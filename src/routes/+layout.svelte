@@ -1,197 +1,211 @@
 <script lang="ts">
   import "../app.css";
   import { fade } from "svelte/transition";
-  import ThemeSelect from "$lib/client/components/ThemeSelect.svelte";
-  import { ExternalLink, Menu, X, Github } from "lucide-svelte";
+  import { ExternalLink, Menu, X, Github, Mic, Play, Settings, FileText, Layers } from "lucide-svelte";
   import type { LayoutProps } from "./$types";
   import { onMount } from "svelte";
   import umami from "$lib/client/umami";
   import { VERSION } from "$lib/shared/version";
+  import { page } from "$app/stores";
 
   let { children }: LayoutProps = $props();
 
   let isOpen = $state(false);
+  let scrolled = $state(false);
+
+  const navLinks = [
+    { href: "/builder", label: "Agent Builder", icon: Settings },
+    { href: "/playground", label: "Playground", icon: Play },
+    { href: "/deployments", label: "Deployments", icon: Layers },
+    { href: "/architecture", label: "Architecture", icon: FileText },
+  ];
 
   onMount(() => {
     umami.loadScript();
     umami.identify({ hostname: window.location.hostname });
+    
+    const handleScroll = () => {
+      scrolled = window.scrollY > 10;
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   });
 </script>
 
-<div class="bg-base-100 h-screen w-screen overflow-x-hidden overflow-y-auto">
-  <div class="mx-auto w-full overflow-hidden md:max-w-7xl">
-    <header
-      class="border-base-content/10 flex w-full items-center justify-between border-b p-4"
-    >
-      <div class="flex items-center space-x-2">
-        <img
-          src="/logo.png"
-          alt="Kokoro Web Logo"
-          class="size-[40px] rounded-full shadow-sm md:size-[50px]"
-        />
-        <div class="text-nowrap">
-          <h1 class="text-xl font-bold md:text-3xl">Kokoro Web</h1>
-          <h2 class="text-sm font-semibold md:text-base">
-            Free AI Voice Generator
-          </h2>
+<div class="min-h-screen bg-background text-foreground">
+  <header
+    class="fixed top-0 z-50 w-full transition-all duration-300 {scrolled ? 'border-b border-border bg-background/80 backdrop-blur-lg' : 'bg-transparent'}"
+  >
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+      <a href="/" class="flex items-center gap-3">
+        <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+          <Mic class="size-5 text-primary" />
         </div>
-      </div>
-      <nav class="hidden md:flex md:items-center md:justify-end">
-        <a
-          href="https://huggingface.co/hexgrad/Kokoro-82M"
-          target="_blank"
-          class="btn btn-ghost"
-          data-umami-event="click-model-header"
-        >
-          <ExternalLink class="size-[16px]" />
-          <span>Model 🤗</span>
-        </a>
-        <a
-          href="/api/v1/index.html"
-          target="_blank"
-          class="btn btn-ghost"
-          data-umami-event="click-api-docs-header"
-        >
-          <ExternalLink class="size-[16px]" />
-          <span>API Docs</span>
-        </a>
+        <div>
+          <div class="text-lg font-bold">VoiceForge</div>
+          <div class="text-xs text-muted">Voice Agent Generator</div>
+        </div>
+      </a>
+      
+      <nav class="hidden items-center gap-1 md:flex">
+        {#each navLinks as link}
+          <a
+            href={link.href}
+            class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all hover:bg-card {$page.url.pathname === link.href ? 'bg-card text-primary' : 'text-muted hover:text-foreground'}"
+          >
+            <link.icon class="size-4" />
+            {link.label}
+          </a>
+        {/each}
+      </nav>
+
+      <div class="hidden items-center gap-3 md:flex">
         <a
           href="https://github.com/eduardolat/kokoro-web"
           target="_blank"
-          class="btn btn-ghost"
-          data-umami-event="click-star-on-github-header"
+          class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted transition-all hover:text-foreground"
         >
-          <Github class="size-[16px]" />
-          <span>Star on GitHub</span>
-          <img
-            alt="GitHub Repo stars"
-            src="https://img.shields.io/github/stars/eduardolat/kokoro-web?style=plastic&label=%20"
-          />
+          <Github class="size-4" />
+          <span>GitHub</span>
         </a>
-        <div class="ml-2">
-          <ThemeSelect />
-        </div>
-      </nav>
+        <a href="/builder" class="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90">
+          Get Started
+        </a>
+      </div>
+
       <button
-        class="btn btn-ghost btn-square md:hidden"
+        class="rounded-lg p-2 transition-all hover:bg-card md:hidden"
         onclick={() => (isOpen = !isOpen)}
       >
-        <Menu class="size-[24px]" />
+        <Menu class="size-6" />
       </button>
-    </header>
+    </div>
+  </header>
 
-    {#if isOpen}
-      <nav
-        class="
-          bg-base-200 fixed top-0 z-50 h-screen w-screen space-y-2 overflow-x-hidden
-          overflow-y-auto p-4 md:hidden
-        "
-        transition:fade={{ duration: 100 }}
-      >
-        <div class="mb-4 flex justify-end">
+  {#if isOpen}
+    <div
+      class="fixed inset-0 z-50 bg-background md:hidden"
+      transition:fade={{ duration: 150 }}
+    >
+      <div class="flex h-full flex-col">
+        <div class="flex items-center justify-between border-b border-border px-4 py-4">
+          <a href="/" class="flex items-center gap-3" onclick={() => (isOpen = false)}>
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+              <Mic class="size-5 text-primary" />
+            </div>
+            <div class="text-lg font-bold">VoiceForge</div>
+          </a>
           <button
-            class="btn btn-ghost btn-square md:hidden"
+            class="rounded-lg p-2 transition-all hover:bg-card"
             onclick={() => (isOpen = !isOpen)}
           >
-            <X class="size-[24px]" />
+            <X class="size-6" />
           </button>
         </div>
 
-        <a
-          href="https://huggingface.co/hexgrad/Kokoro-82M"
-          target="_blank"
-          class="btn btn-soft flex w-full items-center justify-start space-x-1"
-          data-umami-event="click-model-header"
-        >
-          <ExternalLink class="size-[16px]" />
-          <span>Model 🤗</span>
-        </a>
-        <a
-          href="/api/v1/index.html"
-          target="_blank"
-          class="btn btn-soft flex w-full items-center justify-start space-x-1"
-          data-umami-event="click-api-docs-header"
-        >
-          <ExternalLink class="size-[16px]" />
-          <span>API Docs</span>
-        </a>
-        <a
-          href="https://github.com/eduardolat/kokoro-web"
-          target="_blank"
-          class="btn btn-soft flex w-full items-center justify-start space-x-1"
-          data-umami-event="click-star-on-github-header"
-        >
-          <Github class="size-[16px]" />
-          <span>Star on GitHub</span>
-          <img
-            alt="GitHub Repo stars"
-            src="https://img.shields.io/github/stars/eduardolat/kokoro-web?style=plastic&label=%20"
-          />
-        </a>
-        <ThemeSelect class="w-full" />
-      </nav>
-    {/if}
-
-    <main class="mb-[30px] w-full p-4">
-      {@render children()}
-    </main>
-
-    <footer class="border-base-content/10 border-t px-4 py-[50px]">
-      <div class="container mx-auto text-center">
-        <div class="mb-4">
-          <p class="text-lg font-bold">Kokoro Web {VERSION}</p>
-          <p class="text-sm opacity-80">
-            100% Free & Open Source AI Voice Generator
-          </p>
-        </div>
-
-        <div class="mb-4 flex flex-wrap justify-center gap-4">
-          <a
-            href="https://huggingface.co/hexgrad/Kokoro-82M"
-            target="_blank"
-            class="flex items-center gap-1 text-sm hover:underline"
-            data-umami-event="click-model-footer"
-          >
-            <ExternalLink class="size-[14px]" />
-            <span>Powered by Kokoro 82M</span>
-          </a>
-
+        <nav class="flex-1 space-y-1 p-4">
+          {#each navLinks as link}
+            <a
+              href={link.href}
+              onclick={() => (isOpen = false)}
+              class="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-all hover:bg-card {$page.url.pathname === link.href ? 'bg-card text-primary' : 'text-muted'}"
+            >
+              <link.icon class="size-5" />
+              {link.label}
+            </a>
+          {/each}
+          
+          <div class="my-4 border-t border-border"></div>
+          
           <a
             href="https://github.com/eduardolat/kokoro-web"
             target="_blank"
-            class="flex items-center gap-1 text-sm hover:underline"
-            data-umami-event="click-github-footer"
+            class="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-muted transition-all hover:bg-card hover:text-foreground"
           >
-            <Github class="size-[14px]" />
-            <span>Self-hostable</span>
+            <Github class="size-5" />
+            GitHub
+            <ExternalLink class="ml-auto size-4" />
           </a>
+        </nav>
 
-          <a
-            href="/api/v1/index.html"
-            target="_blank"
-            class="flex items-center gap-1 text-sm hover:underline"
-            data-umami-event="click-api-docs-footer"
-          >
-            <ExternalLink class="size-[14px]" />
-            <span>OpenAI Compatible API</span>
+        <div class="border-t border-border p-4">
+          <a href="/builder" onclick={() => (isOpen = false)} class="flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 font-semibold text-primary-foreground transition-all hover:bg-primary/90">
+            Get Started
           </a>
         </div>
+      </div>
+    </div>
+  {/if}
 
-        <p class="text-xs opacity-70">
-          Kokoro Web
-          <span class="mx-1">•</span>
-          Free for personal and commercial use
-          <span class="mx-1">•</span>
+  <main class="pt-[72px]">
+    {@render children()}
+  </main>
+
+  <footer class="border-t border-border bg-card/30 px-4 py-12">
+    <div class="mx-auto max-w-7xl">
+      <div class="grid gap-8 md:grid-cols-4">
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-3">
+            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+              <Mic class="size-5 text-primary" />
+            </div>
+            <div class="text-lg font-bold">VoiceForge</div>
+          </div>
+          <p class="mt-4 max-w-sm text-sm leading-relaxed text-muted">
+            Build intelligent voice agents with speech recognition, natural language understanding, and seamless multi-platform deployment.
+          </p>
+          <p class="mt-4 text-xs text-muted-foreground">
+            Powered by Kokoro TTS {VERSION}
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="mb-4 font-semibold">Platform</h3>
+          <ul class="space-y-2 text-sm text-muted">
+            <li><a href="/builder" class="hover:text-foreground">Agent Builder</a></li>
+            <li><a href="/playground" class="hover:text-foreground">Voice Playground</a></li>
+            <li><a href="/deployments" class="hover:text-foreground">Deployments</a></li>
+            <li><a href="/architecture" class="hover:text-foreground">Architecture</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="mb-4 font-semibold">Resources</h3>
+          <ul class="space-y-2 text-sm text-muted">
+            <li>
+              <a href="/api/v1/index.html" target="_blank" class="flex items-center gap-1 hover:text-foreground">
+                API Documentation
+                <ExternalLink class="size-3" />
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/eduardolat/kokoro-web" target="_blank" class="flex items-center gap-1 hover:text-foreground">
+                GitHub
+                <ExternalLink class="size-3" />
+              </a>
+            </li>
+            <li>
+              <a href="https://huggingface.co/hexgrad/Kokoro-82M" target="_blank" class="flex items-center gap-1 hover:text-foreground">
+                Kokoro Model
+                <ExternalLink class="size-3" />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="mt-8 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-sm text-muted md:flex-row">
+        <p>VoiceForge - Open Source Voice Agent Platform</p>
+        <p>
           <a
-            href="https://eduardo.lat?utm_source=kokoro&utm_medium=web&utm_campaign=footer_link"
+            href="https://eduardo.lat?utm_source=voiceforge&utm_medium=web"
             target="_blank"
-            class="link"
-            data-umami-event="click-author-website"
+            class="hover:text-foreground"
           >
             Created by Eduardo Lat
           </a>
         </p>
       </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 </div>

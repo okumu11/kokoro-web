@@ -6,6 +6,73 @@
     dracula;
 }
 
+@theme inline {
+  --color-background: #0a0a0a;
+  --color-foreground: #fafafa;
+  --color-muted: #a1a1aa;
+  --color-muted-foreground: #71717a;
+  --color-card: #18181b;
+  --color-card-foreground: #fafafa;
+  --color-border: #27272a;
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #10b981;
+  --color-accent-foreground: #ffffff;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
 * {
   scrollbar-width: thin;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-glow {
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
+}
+
+.feature-card {
+  background: linear-gradient(180deg, rgba(39, 39, 42, 0.5) 0%, rgba(24, 24, 27, 0.8) 100%);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+.waveform-animation {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 24px;
+}
+
+.waveform-bar {
+  width: 3px;
+  background: linear-gradient(180deg, #3b82f6 0%, #10b981 100%);
+  border-radius: 2px;
+  animation: waveform 1s ease-in-out infinite;
+}
+
+.waveform-bar:nth-child(1) { animation-delay: 0s; height: 40%; }
+.waveform-bar:nth-child(2) { animation-delay: 0.1s; height: 70%; }
+.waveform-bar:nth-child(3) { animation-delay: 0.2s; height: 100%; }
+.waveform-bar:nth-child(4) { animation-delay: 0.3s; height: 60%; }
+.waveform-bar:nth-child(5) { animation-delay: 0.4s; height: 80%; }
+
+@keyframes waveform {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.5); }
 }
