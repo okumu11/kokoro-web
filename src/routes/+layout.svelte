@@ -1,7 +1,7 @@
 <script lang="ts">
   import "../app.css";
   import { fade } from "svelte/transition";
-  import { ExternalLink, Menu, X, Github, Mic, Play, Settings, FileText, Layers } from "lucide-svelte";
+  import { ExternalLink, Menu, X, Github, Mic, Play, Settings, FileText, Layers, Volume2 } from "lucide-svelte";
   import type { LayoutProps } from "./$types";
   import { onMount } from "svelte";
   import umami from "$lib/client/umami";
@@ -15,6 +15,7 @@
 
   const navLinks = [
     { href: "/builder", label: "Agent Builder", icon: Settings },
+    { href: "/voiceover", label: "Text to Voice", icon: Volume2 },
     { href: "/playground", label: "Playground", icon: Play },
     { href: "/deployments", label: "Deployments", icon: Layers },
     { href: "/architecture", label: "Architecture", icon: FileText },
@@ -163,6 +164,7 @@
           <h3 class="mb-4 font-semibold">Platform</h3>
           <ul class="space-y-2 text-sm text-muted">
             <li><a href="/builder" class="hover:text-foreground">Agent Builder</a></li>
+            <li><a href="/voiceover" class="hover:text-foreground">Text to Voice</a></li>
             <li><a href="/playground" class="hover:text-foreground">Voice Playground</a></li>
             <li><a href="/deployments" class="hover:text-foreground">Deployments</a></li>
             <li><a href="/architecture" class="hover:text-foreground">Architecture</a></li>

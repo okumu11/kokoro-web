@@ -13,7 +13,8 @@
     Shield,
     BarChart3,
     Code,
-    ArrowRight
+    ArrowRight,
+    Volume2
   } from "lucide-svelte";
 
   const features = [
@@ -106,6 +107,10 @@
         <a href="/builder" class="group flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-all hover:bg-primary/90">
           Start Building
           <ArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
+        </a>
+        <a href="/voiceover" class="flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 font-semibold transition-all hover:border-primary/50 hover:bg-card/80">
+          <Volume2 class="size-4" />
+          Text to Voice
         </a>
         <a href="/playground" class="flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 font-semibold transition-all hover:border-primary/50 hover:bg-card/80">
           <Play class="size-4" />
